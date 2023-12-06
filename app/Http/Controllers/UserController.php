@@ -97,6 +97,7 @@ class UserController extends Controller
 
   public function show(Request $request)
   {
-    return $request->user();
+    $user = $request->user();
+    return response()->json(new UserResource($user), 201);
   }
 }

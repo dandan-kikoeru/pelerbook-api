@@ -29,13 +29,13 @@ class PostController extends Controller
         ->save(public_path($imageName));
     }
 
-    Post::create([
+    $post = Post::create([
       'caption' => htmlspecialchars($request->caption),
       'id' => $randId,
       'user_id' => auth()->user()->id,
       'image' => $imageName,
     ]);
-    return back()->with('success', 'Success created post');
+    return response()->json(new PostResource($post), 201);
   }
 
   public function update(Request $request, $id)
@@ -76,9 +76,9 @@ class PostController extends Controller
     if (auth()->user()->id = $id->user_id) {
       $id->likes()->delete();
       $id->delete();
-      return back()->with('success', 'Success deleted post');
+      return response()->json(['message' => 'Post deleted successfully'], 200);
     }
-    return abort(401);
+    return abort(400);
   }
   public function index(Request $request)
   {
@@ -89,7 +89,9 @@ class PostController extends Controller
 
   public function show($id)
   {
-    $post = Post::find($id);
-    return new PostResource($post);
+    if ($post = Post::find($id)) {
+      return new PostResource($post);
+    }
+    return abort(404);
   }
 }
