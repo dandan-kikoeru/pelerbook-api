@@ -82,8 +82,7 @@ class PostController extends Controller
   }
   public function index(Request $request)
   {
-    $takePage = $request->input('take', 1);
-    $posts = Post::latest()->paginate(10 * $takePage);
+    $posts = Post::latest()->paginate(10);
     return PostResource::collection($posts);
   }
 

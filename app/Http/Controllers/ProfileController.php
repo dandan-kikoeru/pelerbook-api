@@ -11,11 +11,8 @@ class ProfileController extends Controller
 {
   public function index($id, Request $request)
   {
-    $takePage = $request->input('take', 1);
-
     $user = User::find($id);
-
-    $posts = Post::where('user_id', $user->id)->latest()->paginate(10 * $takePage);
+    $posts = Post::where('user_id', $user->id)->latest()->paginate(10);
     return PostResource::collection($posts);
   }
 }
