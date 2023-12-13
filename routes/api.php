@@ -37,5 +37,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
   });
 
   Route::post('/like/{id}', [LikeController::class, 'like']);
-  Route::get('/profile/{id}', [ProfileController::class, 'index']);
+  Route::get('/profile/posts/{id}', [ProfileController::class, 'index']);
+  Route::get('/profile/{id}', [ProfileController::class, 'show']);
 });
