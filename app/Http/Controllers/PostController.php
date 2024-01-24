@@ -18,6 +18,7 @@ class PostController extends Controller
 
     $imageName = null;
     $randId = Str::random(16);
+    $randNum = random_int(0, 63);
 
     if ($request->hasFile('image')) {
       $request->validate([
@@ -27,6 +28,7 @@ class PostController extends Controller
       Image::make($request->file('image'))
         ->encode('webp', 90)
         ->save(public_path($imageName));
+      $imageName = $imageName . '?' . $randNum;
     }
 
     $post = Post::create([
@@ -50,7 +52,7 @@ class PostController extends Controller
     ]);
 
     $imageName = null;
-
+    $randNum = random_int(0, 63);
     if ($request->image !== null) {
       $imageName = $post->image;
     }
@@ -63,12 +65,12 @@ class PostController extends Controller
       Image::make($request->file('image'))
         ->encode('webp', 90)
         ->save(public_path($imageName));
+      $imageName = $imageName . '?' . $randNum;
     }
-
     $post->caption = htmlspecialchars($request->caption);
     $post->image = $imageName;
     $post->save();
-    return back()->with('success', 'Success edited post');
+    return response()->json(new PostResource($post), 200);
   }
 
   public function destroy(Post $id)
