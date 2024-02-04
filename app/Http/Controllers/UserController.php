@@ -36,10 +36,7 @@ class UserController extends Controller
 
     if (Auth::attempt($credentials)) {
       $user = Auth::user();
-      $user->tokens()->delete();
-      $token = $user->createToken('auth_token')->plainTextToken;
-      return response()->json(['token' => $token, new UserResource($user)], 200);
-
+      return response()->json(new UserResource($user), 200);
     }
 
     return response()->json(['message' => 'Invalid credentials'], 400);
@@ -47,14 +44,15 @@ class UserController extends Controller
 
   public function logout(Request $request)
   {
-    $request->user()->tokens()->delete();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
     return response()->json(['message' => 'Logged out successfully'], 200);
   }
 
   public function update(Request $request)
   {
     $user = Auth::user();
-
+    $randNum = random_int(0, 63);
     if ($request->hasFile('avatar')) {
       $request->validate([
         'avatar' => ['mimes:jpeg,png,jpg,webp', 'max:2048'],
@@ -63,11 +61,11 @@ class UserController extends Controller
       $avatarName = $user->id . '.webp';
       $avatar = Image::make($request->file('avatar'))->encode('webp', 90);
       $avatar
-        ->resize(128, null, function ($constraint) {
+        ->resize(256, null, function ($constraint) {
           $constraint->aspectRatio();
         })
         ->save(public_path('/avatars/' . $avatarName));
-      $user->avatar = '/avatars/' . $avatarName;
+      $user->avatar = '/avatars/' . $avatarName . '?' . $randNum;
     }
 
     if ($request->hasFile('cover')) {
@@ -79,7 +77,7 @@ class UserController extends Controller
       Image::make($request->file('cover'))
         ->encode('webp', 90)
         ->save(public_path('/covers/' . $coverName));
-      $user->cover = '/covers/' . $coverName;
+      $user->cover = '/covers/' . $coverName . '?' . $randNum;
     }
 
     if ($request->firstname) {
@@ -90,14 +88,13 @@ class UserController extends Controller
       $user->firstname = $request->firstname;
       $user->surname = $request->surname;
     }
-
     $user->save();
-    return response()->json(['message' => 'User information updated successfully'], 200);
+    return response()->json(new UserResource($user), 200);
   }
 
   public function show(Request $request)
   {
     $user = $request->user();
-    return response()->json(new UserResource($user), 201);
+    return response()->json(new UserResource($user), 200);
   }
 }
