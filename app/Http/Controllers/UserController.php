@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\UserResource;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 use Image;
+use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -22,9 +23,7 @@ class UserController extends Controller
     ]);
     $user = User::create($credentials);
     Auth::login($user);
-    $token = $user->createToken('auth_token')->plainTextToken;
-
-    return response()->json(['token' => $token, new UserResource($user)], 201);
+    return response()->json(new UserResource($user), 201);
   }
 
   public function login(Request $request)
@@ -52,7 +51,7 @@ class UserController extends Controller
   public function update(Request $request)
   {
     $user = Auth::user();
-    $randNum = random_int(0, 63);
+    $rand = Str::random(4);
     if ($request->hasFile('avatar')) {
       $request->validate([
         'avatar' => ['mimes:jpeg,png,jpg,webp', 'max:2048'],
@@ -65,7 +64,7 @@ class UserController extends Controller
           $constraint->aspectRatio();
         })
         ->save(public_path('/avatars/' . $avatarName));
-      $user->avatar = '/avatars/' . $avatarName . '?' . $randNum;
+      $user->avatar = '/avatars/' . $avatarName . '?' . $rand;
     }
 
     if ($request->hasFile('cover')) {
@@ -77,7 +76,7 @@ class UserController extends Controller
       Image::make($request->file('cover'))
         ->encode('webp', 90)
         ->save(public_path('/covers/' . $coverName));
-      $user->cover = '/covers/' . $coverName . '?' . $randNum;
+      $user->cover = '/covers/' . $coverName . '?' . $rand;
     }
 
     if ($request->firstname) {

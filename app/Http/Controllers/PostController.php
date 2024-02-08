@@ -18,7 +18,7 @@ class PostController extends Controller
 
     $imageName = null;
     $randId = Str::random(16);
-    $randNum = random_int(0, 63);
+    $rand = Str::random(4);
 
     if ($request->hasFile('image')) {
       $request->validate([
@@ -28,7 +28,7 @@ class PostController extends Controller
       Image::make($request->file('image'))
         ->encode('webp', 90)
         ->save(public_path($imageName));
-      $imageName = $imageName . '?' . $randNum;
+      $imageName = $imageName . '?' . $rand;
     }
 
     $post = Post::create([
@@ -52,7 +52,7 @@ class PostController extends Controller
     ]);
 
     $imageName = null;
-    $randNum = random_int(0, 63);
+    $rand = Str::random(4);
     if ($request->image !== null) {
       $imageName = $post->image;
     }
@@ -65,7 +65,7 @@ class PostController extends Controller
       Image::make($request->file('image'))
         ->encode('webp', 90)
         ->save(public_path($imageName));
-      $imageName = $imageName . '?' . $randNum;
+      $imageName = $imageName . '?' . $rand;
     }
     $post->caption = htmlspecialchars($request->caption);
     $post->image = $imageName;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
 use App\Models\Like;
 use App\Models\Post;
 
@@ -21,11 +22,11 @@ class LikeController extends Controller
       ];
 
       Like::create($like);
-      return;
+      return response()->json(new PostResource($post), 200);
     }
 
     $userAlreadyLiked->delete();
-    return;
+    return response()->json(new PostResource($post), 200);
   }
 
 }
