@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -38,4 +39,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('/like/{id}', [LikeController::class, 'like']);
   Route::get('/profile/posts/{id}', [ProfileController::class, 'index']);
   Route::get('/profile/{id}', [ProfileController::class, 'show']);
+
+  Route::prefix('/comment')->group(function () {
+    Route::post('/store/{postId}', [CommentController::class, 'store']);
+    Route::post('/update/{id}', [CommentController::class, 'update']);
+    Route::post('/destroy/{id}', [CommentController::class, 'destroy']);
+  });
 });
