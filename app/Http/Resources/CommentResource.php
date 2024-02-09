@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Services\Formatting;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,7 +18,8 @@ class CommentResource extends JsonResource
     return [
       'user' => new UserResource($this->user),
       'id' => $this->id,
-      'comment' => $this->comment,
+      'comment' => Formatting::format_message($this->comment),
+      'createdAt' => $this->created_at,
     ];
   }
 }
