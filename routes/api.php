@@ -34,14 +34,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/destroy/{id}', [PostController::class, 'destroy']);
     Route::get('/', [PostController::class, 'index']);
     Route::get('/{id}', [PostController::class, 'show']);
+    Route::post('/like/{id}', [LikeController::class, 'post']);
   });
 
-  Route::post('/like/{id}', [LikeController::class, 'like']);
   Route::get('/profile/posts/{id}', [ProfileController::class, 'index']);
   Route::get('/profile/{id}', [ProfileController::class, 'show']);
 
   Route::prefix('/comment')->group(function () {
     Route::post('/store/{postId}', [CommentController::class, 'store']);
+    Route::post('/update/{id}', [CommentController::class, 'update']);
+    Route::post('/destroy/{id}', [CommentController::class, 'destroy']);
+    Route::post('/like/{id}', [LikeController::class, 'comment']);
+  });
+
+  Route::prefix('/reply')->group(function () {
+    Route::post('/store/{commentId}', [CommentController::class, 'store']);
     Route::post('/update/{id}', [CommentController::class, 'update']);
     Route::post('/destroy/{id}', [CommentController::class, 'destroy']);
   });

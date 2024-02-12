@@ -73,11 +73,11 @@ class PostController extends Controller
     return response()->json(new PostResource($post), 200);
   }
 
-  public function destroy(Post $id)
+  public function destroy($id)
   {
-    if (auth()->user()->id = $id->user_id) {
-      $id->likes()->delete();
-      $id->delete();
+    $post = Post::find($id);
+    if (auth()->user()->id = $post->user_id) {
+      $post->delete();
       return response()->json(['message' => 'Post deleted successfully'], 200);
     }
     return abort(400);

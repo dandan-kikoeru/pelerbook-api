@@ -13,7 +13,7 @@ class CommentController extends Controller
   public function store(Request $request, $postId)
   {
     $request->validate([
-      'comment' => ['required'],
+      'content' => ['required'],
     ]);
 
     $user = auth()->user();
@@ -21,7 +21,7 @@ class CommentController extends Controller
     $id = Str::random(16);
 
     $comment = Comment::create([
-      'comment' => htmlspecialchars($request->comment),
+      'content' => htmlspecialchars($request->content),
       'id' => $id,
       'user_id' => $user->id,
       'post_id' => $post->id,
@@ -31,6 +31,13 @@ class CommentController extends Controller
 
   public function update(Request $request)
   {}
-  public function destroy(Request $request)
-  {}
+  public function destroy(Request $request, $id)
+  {
+    $comment = Comment::find($id);
+    if (auth()->user()->id = $comment->user_id) {
+      $comment->delete();
+      return response()->json(['message' => 'Comment deleted successfully'], 200);
+    }
+    return abort(400);
+  }
 }

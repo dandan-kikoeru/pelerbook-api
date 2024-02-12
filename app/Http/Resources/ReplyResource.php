@@ -6,7 +6,7 @@ use App\Services\Formatting;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CommentResource extends JsonResource
+class ReplyResource extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -20,10 +20,6 @@ class CommentResource extends JsonResource
       'id' => $this->id,
       'content' => Formatting::format_message($this->content),
       'createdAt' => $this->created_at,
-      'replies' => ReplyResource::collection($this->replies),
-      'likes' => $this->likes->count(),
-      'likedByUser' => $this->likes->where('user_id', auth()->user()->id)->isNotEmpty(),
-      'postId' => $this->post->id,
     ];
   }
 }
