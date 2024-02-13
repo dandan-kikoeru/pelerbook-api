@@ -44,7 +44,7 @@ class PostController extends Controller
   {
     $post = Post::find($id);
     if (auth()->user()->id !== $post->user_id) {
-      return abort(401);
+      return abort(400);
     }
 
     $request->validate([
@@ -76,7 +76,7 @@ class PostController extends Controller
   public function destroy($id)
   {
     $post = Post::find($id);
-    if (auth()->user()->id = $post->user_id) {
+    if (auth()->user()->id === $post->user_id) {
       $post->delete();
       return response()->json(['message' => 'Post deleted successfully'], 200);
     }

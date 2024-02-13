@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Services\Formatting;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,7 +17,7 @@ class PostResource extends JsonResource
 
     return [
       'id' => $this->id,
-      'caption' => Formatting::format_message($this->caption),
+      'caption' => $this->caption,
       'createdAt' => $this->created_at,
       'user' => new UserResource($this->user),
       'likes' => $this->likes->count(),

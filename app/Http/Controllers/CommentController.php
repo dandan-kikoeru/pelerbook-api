@@ -29,12 +29,25 @@ class CommentController extends Controller
     return response()->json(new CommentResource($comment), 201);
   }
 
-  public function update(Request $request)
-  {}
+  public function update(Request $request, $id)
+  {
+    $request->validate([
+      'content' => ['required'],
+    ]);
+
+    $comment = Comment::find($id);
+
+    if (auth()->user()->id === $comment->user_id) {
+      $comment->content = htmlspecialchars($request->content);
+      $comment->save();
+      return response()->json(new CommentResource($comment), 200);
+    }
+    return abort(400);
+  }
   public function destroy(Request $request, $id)
   {
     $comment = Comment::find($id);
-    if (auth()->user()->id = $comment->user_id) {
+    if (auth()->user()->id === $comment->user_id) {
       $comment->delete();
       return response()->json(['message' => 'Comment deleted successfully'], 200);
     }

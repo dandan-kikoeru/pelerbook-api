@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Image;
-use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Http\Resources\UserResource;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Image;
 
 class UserController extends Controller
 {
@@ -34,6 +34,7 @@ class UserController extends Controller
     ]);
 
     if (Auth::attempt($credentials)) {
+      $request->session()->regenerateToken();
       $user = Auth::user();
       return response()->json(new UserResource($user), 200);
     }
