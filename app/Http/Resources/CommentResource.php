@@ -19,6 +19,7 @@ class CommentResource extends JsonResource
       'id' => $this->id,
       'content' => $this->content,
       'createdAt' => $this->created_at,
+      'repliesCount' => $this->replies->count(),
       'replies' => ReplyResource::collection($this->replies),
       'likes' => $this->likes->count(),
       'likedByUser' => $this->likes->where('user_id', auth()->user()->id)->isNotEmpty(),

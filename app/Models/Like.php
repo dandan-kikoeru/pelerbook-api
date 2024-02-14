@@ -14,6 +14,7 @@ class Like extends Model
     'post_id',
     'user_id',
     'comment_id',
+    'reply_id',
   ];
 
   public function user()
@@ -29,5 +30,10 @@ class Like extends Model
   public function comment()
   {
     return $this->belongsTo(Comment::class, 'comment_id');
+  }
+
+  public function reply()
+  {
+    return $this->belongsTo(Reply::class, 'reply_id');
   }
 }

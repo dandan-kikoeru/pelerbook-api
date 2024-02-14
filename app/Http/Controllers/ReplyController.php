@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Http\Resources\ReplyResource;
+use App\Models\Comment;
+use App\Models\Reply;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ReplyController extends Controller
 {
@@ -19,7 +20,7 @@ class ReplyController extends Controller
     $comment = Comment::find($commentId);
     $id = Str::random(16);
 
-    $reply = Comment::create([
+    $reply = Reply::create([
       'content' => htmlspecialchars($request->content),
       'id' => $id,
       'user_id' => $user->id,
@@ -28,8 +29,29 @@ class ReplyController extends Controller
     return response()->json(new ReplyResource($reply), 201);
   }
 
-  public function update(Request $request)
-  {}
-  public function destroy(Request $request)
-  {}
+  public function update(Request $request, $id)
+  {
+    $request->validate([
+      'content' => ['required'],
+    ]);
+
+    $reply = Reply::find($id);
+
+    if (auth()->user()->id === $reply->user_id) {
+      $reply->content = htmlspecialchars($request->content);
+      $reply->save();
+      return response()->json(new ReplyResource($reply), 200);
+    }
+    return abort(400);
+  }
+
+  public function destroy(Request $request, $id)
+  {
+    $reply = Reply::find($id);
+    if (auth()->user()->id === $reply->user_id) {
+      $reply->delete();
+      return response()->json(['message' => 'Reply deleted successfully'], 200);
+    }
+    return abort(400);
+  }
 }

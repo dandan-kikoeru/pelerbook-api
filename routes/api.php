@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\CommentController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,8 +49,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
   });
 
   Route::prefix('/reply')->group(function () {
-    Route::post('/store/{commentId}', [CommentController::class, 'store']);
-    Route::post('/update/{id}', [CommentController::class, 'update']);
-    Route::post('/destroy/{id}', [CommentController::class, 'destroy']);
+    Route::post('/store/{commentId}', [ReplyController::class, 'store']);
+    Route::post('/update/{id}', [ReplyController::class, 'update']);
+    Route::post('/destroy/{id}', [ReplyController::class, 'destroy']);
+    Route::post('/like/{id}', [LikeController::class, 'reply']);
   });
 });

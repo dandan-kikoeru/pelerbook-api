@@ -28,7 +28,7 @@ class PostController extends Controller
       Image::make($request->file('image'))
         ->encode('webp', 90)
         ->save(public_path($imageName));
-      $imageName = $imageName . '?' . $rand;
+      $imageName = $imageName . '#' . $rand;
     }
 
     $post = Post::create([
@@ -65,7 +65,7 @@ class PostController extends Controller
       Image::make($request->file('image'))
         ->encode('webp', 90)
         ->save(public_path($imageName));
-      $imageName = $imageName . '?' . $rand;
+      $imageName = $imageName . '#' . $rand;
     }
     $post->caption = htmlspecialchars($request->caption);
     $post->image = $imageName;

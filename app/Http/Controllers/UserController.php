@@ -65,7 +65,7 @@ class UserController extends Controller
           $constraint->aspectRatio();
         })
         ->save(public_path('/avatars/' . $avatarName));
-      $user->avatar = '/avatars/' . $avatarName . '?' . $rand;
+      $user->avatar = '/avatars/' . $avatarName . '#' . $rand;
     }
 
     if ($request->hasFile('cover')) {
@@ -77,7 +77,7 @@ class UserController extends Controller
       Image::make($request->file('cover'))
         ->encode('webp', 90)
         ->save(public_path('/covers/' . $coverName));
-      $user->cover = '/covers/' . $coverName . '?' . $rand;
+      $user->cover = '/covers/' . $coverName . '#' . $rand;
     }
 
     if ($request->firstname) {

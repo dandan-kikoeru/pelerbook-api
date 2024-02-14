@@ -27,4 +27,9 @@ class Reply extends Model
   {
     return $this->belongsTo(Comment::class, 'comment_id');
   }
+
+  public function likes()
+  {
+    return $this->hasMany(Like::class, 'reply_id');
+  }
 }
