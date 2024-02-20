@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ReplyResource;
 use App\Models\Comment;
+use App\Models\Post;
 use App\Models\Reply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -26,7 +27,11 @@ class ReplyController extends Controller
       'user_id' => $user->id,
       'comment_id' => $comment->id,
     ]);
-    return response()->json(new ReplyResource($reply), 201);
+    $totalCommentsCount = totalCommentsCount(Post::find($comment->post->id));
+    return response()->json([
+      'data' => new ReplyResource($reply),
+      'commentsCount' => $totalCommentsCount,
+    ], 201);
   }
 
   public function update(Request $request, $id)
@@ -40,7 +45,9 @@ class ReplyController extends Controller
     if (auth()->user()->id === $reply->user_id) {
       $reply->content = htmlspecialchars($request->content);
       $reply->save();
-      return response()->json(new ReplyResource($reply), 200);
+      return response()->json([
+        'data' => new ReplyResource($reply),
+      ], 200);
     }
     return abort(400);
   }
@@ -48,9 +55,11 @@ class ReplyController extends Controller
   public function destroy(Request $request, $id)
   {
     $reply = Reply::find($id);
+
     if (auth()->user()->id === $reply->user_id) {
       $reply->delete();
-      return response()->json(['message' => 'Reply deleted successfully'], 200);
+      $totalCommentsCount = totalCommentsCount(Post::find($reply->comment->post->id));
+      return response()->json(['commentsCount' => $totalCommentsCount], 200);
     }
     return abort(400);
   }

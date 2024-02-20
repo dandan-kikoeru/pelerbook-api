@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,11 +15,7 @@ class PostResource extends JsonResource
    */
   public function toArray(Request $request): array
   {
-    $totalCommentCount = $this->comments->count();
-
-    foreach ($this->comments as $comment) {
-      $totalCommentCount += $comment->replies->count();
-    }
+    $totalCommentsCount = totalCommentsCount(Post::find($this->id));
     return [
       'id' => $this->id,
       'caption' => $this->caption,
@@ -27,7 +24,7 @@ class PostResource extends JsonResource
       'likes' => $this->likes->count(),
       'likedByUser' => $this->likes->where('user_id', auth()->user()->id)->isNotEmpty(),
       'image' => $this->image,
-      'commentsCount' => $totalCommentCount,
+      'commentsCount' => $totalCommentsCount,
       'comments' => CommentResource::collection($this->comments),
     ];
   }

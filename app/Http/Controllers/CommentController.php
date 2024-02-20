@@ -26,7 +26,11 @@ class CommentController extends Controller
       'user_id' => $user->id,
       'post_id' => $post->id,
     ]);
-    return response()->json(new CommentResource($comment), 201);
+    $totalCommentsCount = totalCommentsCount($post);
+    return response()->json([
+      'data' => new CommentResource($comment),
+      'commentsCount' => $totalCommentsCount,
+    ], 201);
   }
 
   public function update(Request $request, $id)
@@ -49,7 +53,10 @@ class CommentController extends Controller
     $comment = Comment::find($id);
     if (auth()->user()->id === $comment->user_id) {
       $comment->delete();
-      return response()->json(['message' => 'Comment deleted successfully'], 200);
+      $totalCommentsCount = totalCommentsCount(Post::find($comment->post->id));
+      return response()->json([
+        'commentsCount' => $totalCommentsCount,
+      ], 200);
     }
     return abort(400);
   }
