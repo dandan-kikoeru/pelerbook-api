@@ -16,6 +16,12 @@ class PostResource extends JsonResource
   public function toArray(Request $request): array
   {
     $totalCommentsCount = totalCommentsCount(Post::find($this->id));
+    $comments = $this->comments()
+      ->latest()
+      ->paginate(10);
+    // reverse the paginated array
+    $comments->setCollection($comments->getCollection()->reverse());
+
     return [
       'id' => $this->id,
       'caption' => $this->caption,
@@ -25,7 +31,8 @@ class PostResource extends JsonResource
       'likedByUser' => $this->likes->where('user_id', auth()->user()->id)->isNotEmpty(),
       'image' => $this->image,
       'commentsCount' => $totalCommentsCount,
-      'comments' => CommentResource::collection($this->comments),
+      // http://localhost:3000/...?withoutComments=true
+      'comments' => $request->withoutComments ? [] : CommentResource::collection($comments),
     ];
   }
 }

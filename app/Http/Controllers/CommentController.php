@@ -44,7 +44,9 @@ class CommentController extends Controller
     if (auth()->user()->id === $comment->user_id) {
       $comment->content = htmlspecialchars($request->content);
       $comment->save();
-      return response()->json(new CommentResource($comment), 200);
+      return response()->json([
+        'content' => $comment->content,
+      ], 200);
     }
     return abort(400);
   }
@@ -59,5 +61,13 @@ class CommentController extends Controller
       ], 200);
     }
     return abort(400);
+  }
+
+  public function index(Request $request, $postId)
+  {
+    $comments = Comment::where('post_id', $postId)
+      ->latest()
+      ->paginate(10);
+    return CommentResource::collection($comments);
   }
 }

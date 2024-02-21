@@ -16,8 +16,8 @@ class UserController extends Controller
   public function register(Request $request)
   {
     $credentials = $request->validate([
-      'firstname' => ['required', 'regex:/^[A-Za-z]+$/'],
-      'surname' => ['required', 'regex:/^[A-Za-z]+$/'],
+      'firstname' => ['required', 'regex:/^[A-Za-z\s]+$/'],
+      'surname' => ['required', 'regex:/^[A-Za-z\s]+$/'],
       'email' => ['required', 'email', Rule::unique('users', 'email')],
       'password' => ['required', 'min:8'],
     ]);
@@ -82,8 +82,8 @@ class UserController extends Controller
 
     if ($request->firstname) {
       $request->validate([
-        'firstname' => ['required', 'regex:/^[A-Za-z]+$/'],
-        'surname' => ['required', 'regex:/^[A-Za-z]+$/'],
+        'firstname' => ['required', 'regex:/^[A-Za-z\s]+$/'],
+        'surname' => ['required', 'regex:/^[A-Za-z\s]+$/'],
       ]);
       $user->firstname = $request->firstname;
       $user->surname = $request->surname;

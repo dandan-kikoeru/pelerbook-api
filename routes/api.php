@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ReplyController;
-use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +36,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [PostController::class, 'index']);
     Route::get('/{id}', [PostController::class, 'show']);
     Route::post('/like/{id}', [LikeController::class, 'post']);
+    Route::get('/{postId}/comments', [CommentController::class, 'index']);
   });
 
   Route::get('/profile/posts/{id}', [ProfileController::class, 'index']);

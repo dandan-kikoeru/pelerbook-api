@@ -45,9 +45,7 @@ class ReplyController extends Controller
     if (auth()->user()->id === $reply->user_id) {
       $reply->content = htmlspecialchars($request->content);
       $reply->save();
-      return response()->json([
-        'data' => new ReplyResource($reply),
-      ], 200);
+      return response()->json(new ReplyResource($reply), 200);
     }
     return abort(400);
   }

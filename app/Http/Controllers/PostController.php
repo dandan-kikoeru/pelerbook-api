@@ -70,7 +70,10 @@ class PostController extends Controller
     $post->caption = htmlspecialchars($request->caption);
     $post->image = $imageName;
     $post->save();
-    return response()->json(new PostResource($post), 200);
+    return response()->json([
+      'caption' => $post->caption,
+      'image' => $imageName,
+    ], 200);
   }
 
   public function destroy($id)
@@ -90,7 +93,8 @@ class PostController extends Controller
 
   public function show($id)
   {
-    if ($post = Post::find($id)) {
+    $post = Post::find($id);
+    if ($post) {
       return new PostResource($post);
     }
     return abort(404);

@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ReplyResource;
+use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\Reply;
-use App\Models\Comment;
-use App\Http\Resources\PostResource;
-use App\Http\Resources\ReplyResource;
-use App\Http\Resources\CommentResource;
 
 class LikeController extends Controller
 {
@@ -26,11 +24,17 @@ class LikeController extends Controller
       ];
 
       Like::create($like);
-      return response()->json(new PostResource($post), 200);
+      return response()->json([
+        'likes' => $post->likes->count(),
+        'likedByUser' => $post->likes->where('user_id', auth()->user()->id)->isNotEmpty(),
+      ], 200);
     }
 
     $userAlreadyLiked->delete();
-    return response()->json(new PostResource($post), 200);
+    return response()->json([
+      'likes' => $post->likes->count(),
+      'likedByUser' => $post->likes->where('user_id', auth()->user()->id)->isNotEmpty(),
+    ], 200);
   }
 
   public function comment($id)
@@ -47,11 +51,17 @@ class LikeController extends Controller
       ];
 
       Like::create($like);
-      return response()->json(new CommentResource($comment), 200);
+      return response()->json([
+        'likes' => $comment->likes->count(),
+        'likedByUser' => $comment->likes->where('user_id', auth()->user()->id)->isNotEmpty(),
+      ], 200);
     }
 
     $userAlreadyLiked->delete();
-    return response()->json(new CommentResource($comment), 200);
+    return response()->json([
+      'likes' => $comment->likes->count(),
+      'likedByUser' => $comment->likes->where('user_id', auth()->user()->id)->isNotEmpty(),
+    ], 200);
   }
 
   public function reply($id)
@@ -69,9 +79,11 @@ class LikeController extends Controller
 
       Like::create($like);
       return response()->json(new ReplyResource($reply), 200);
+
     }
 
     $userAlreadyLiked->delete();
     return response()->json(new ReplyResource($reply), 200);
+
   }
 }
