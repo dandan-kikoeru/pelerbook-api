@@ -18,7 +18,7 @@ class PostResource extends JsonResource
     $totalCommentsCount = totalCommentsCount(Post::find($this->id));
     $comments = $this->comments()
       ->latest()
-      ->paginate(10);
+      ->paginate(2);
     // reverse the paginated array
     $comments->setCollection($comments->getCollection()->reverse());
 

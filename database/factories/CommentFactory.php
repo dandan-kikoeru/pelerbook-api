@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Comment>
  */
-class PostFactory extends Factory
+class CommentFactory extends Factory
 {
   /**
    * Define the model's default state.
@@ -20,8 +20,7 @@ class PostFactory extends Factory
     $id = Str::random(16);
     return [
       'id' => $id,
-      'caption' => $this->faker->realText,
-      'created_at' => $this->faker->dateTimeThisYear,
+      'content' => $this->faker->realText,
     ];
   }
 }
