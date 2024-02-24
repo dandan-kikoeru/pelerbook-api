@@ -33,6 +33,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/store', [PostController::class, 'store']);
     Route::post('/update/{id}', [PostController::class, 'update']);
     Route::post('/destroy/{id}', [PostController::class, 'destroy']);
+    Route::post('/share/{id}', [PostController::class, 'share']);
     Route::get('/', [PostController::class, 'index']);
     Route::get('/{id}', [PostController::class, 'show']);
     Route::post('/like/{id}', [LikeController::class, 'post']);

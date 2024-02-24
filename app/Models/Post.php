@@ -15,6 +15,7 @@ class Post extends Model
     'caption',
     'user_id',
     'image',
+    'shared_id',
   ];
 
   public function user()
@@ -30,5 +31,15 @@ class Post extends Model
   public function comments()
   {
     return $this->hasMany(Comment::class, 'post_id');
+  }
+
+  public function shared()
+  {
+    return $this->belongsTo(Post::class, 'shared_id');
+  }
+
+  public function shares()
+  {
+    return $this->hasMany(Post::class, 'shared_id');
   }
 }

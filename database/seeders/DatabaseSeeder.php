@@ -27,6 +27,15 @@ class DatabaseSeeder extends Seeder
       ]);
     }
     $postIds = $posts->pluck('id')->toArray();
+    for ($i = 0; $i < 5; $i++) {
+      $post = Post::find($postIds[array_rand($postIds)]);
+      Post::factory()->create([
+        'user_id' => $userIds[array_rand($userIds)],
+        'shared_id' => $post->id,
+        'created_at' => fake()->dateTimeBetween($post->created_at, 'now'),
+      ]);
+    }
+    $postIds = $posts->pluck('id')->toArray();
 
     for ($i = 0; $i < 1000; $i++) {
       $post = Post::find($postIds[array_rand($postIds)]);

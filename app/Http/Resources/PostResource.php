@@ -31,8 +31,10 @@ class PostResource extends JsonResource
       'likedByUser' => $this->likes->where('user_id', auth()->user()->id)->isNotEmpty(),
       'image' => $this->image,
       'commentsCount' => $totalCommentsCount,
-      // http://localhost:3000/...?withoutComments=true
+      // /api/post/{id}?withoutComments=true
       'comments' => $request->withoutComments ? [] : CommentResource::collection($comments),
+      'shared' => new PostResource($this->shared),
+      'sharesCount' => $this->shares->count(),
     ];
   }
 }

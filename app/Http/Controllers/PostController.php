@@ -12,8 +12,11 @@ class PostController extends Controller
 {
   public function store(Request $request)
   {
+    if (!$request->caption && !$request->hasFile('image')) {
+      return response()->json(['message' => 'Caption or Image is required.'], 400);
+    }
     $request->validate([
-      'caption' => ['required'],
+      'caption' => ['sometimes', 'nullable'],
     ]);
 
     $imageName = null;
@@ -42,13 +45,16 @@ class PostController extends Controller
 
   public function update(Request $request, $id)
   {
+    if (!$request->caption && !$request->hasFile('image')) {
+      return response()->json(['message' => 'Caption or Image is required.'], 400);
+    }
     $post = Post::find($id);
     if (auth()->user()->id !== $post->user_id) {
       return abort(400);
     }
 
     $request->validate([
-      'caption' => ['required'],
+      'caption' => ['sometimes', 'nullable'],
     ]);
 
     $imageName = null;
@@ -98,5 +104,29 @@ class PostController extends Controller
       return new PostResource($post);
     }
     return abort(404);
+  }
+
+  public function share(Request $request, $id)
+  {
+    $request->validate([
+      'caption' => ['sometimes', 'nullable'],
+    ]);
+    $sharedPost = Post::find($id);
+
+    if (!$sharedPost) {
+      return abort(404);
+    }
+    $randId = Str::random(16);
+    $post = Post::create([
+      'id' => $randId,
+      'caption' => $request->caption,
+      'shared_id' => $sharedPost->id,
+      'user_id' => auth()->user()->id,
+    ]);
+
+    return response()->json([
+      'data' => new PostResource($post),
+      'sharesCount' => $sharedPost->shares->count(),
+    ], 201);
   }
 }
