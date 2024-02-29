@@ -28,7 +28,7 @@ class CommentController extends Controller
     ]);
     $totalCommentsCount = totalCommentsCount($post);
     return response()->json([
-      'data' => new CommentResource($comment),
+      'comment' => new CommentResource($comment),
       'commentsCount' => $totalCommentsCount,
     ], 201);
   }

@@ -13,12 +13,17 @@ class ProfileController extends Controller
   public function index($id, Request $request)
   {
     $user = User::find($id);
-    $posts = Post::where('user_id', $user->id)->latest()->paginate(10);
+    $posts = Post::where('user_id', $user->id)
+      ->latest()
+      ->paginate(10);
     return PostResource::collection($posts);
+
   }
   public function show($id, Request $request)
   {
     $user = User::find($id);
-    return new UserResource($user);
+    return response()->json([
+      'user' => new UserResource($user),
+    ], 200);
   }
 }

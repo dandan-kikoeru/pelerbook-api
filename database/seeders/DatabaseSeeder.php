@@ -18,12 +18,16 @@ class DatabaseSeeder extends Seeder
   public function run(): void
   {
 
-    $users = User::factory()->count(25)->create();
+    $users = User::factory()->count(50)->create([
+      'created_at' => fake()->dateTimeBetween('-2 years', 'now'),
+    ]);
     $userIds = $users->pluck('id')->toArray();
 
     for ($i = 0; $i < 25; $i++) {
+      $user = User::find($userIds[array_rand($userIds)]);
       $posts = Post::factory()->create([
-        'user_id' => $userIds[array_rand($userIds)],
+        'user_id' => $user->id,
+        'created_at' => fake()->dateTimeBetween($user->created_at, 'now'),
       ]);
     }
     $postIds = $posts->pluck('id')->toArray();

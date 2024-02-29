@@ -21,7 +21,6 @@ class PostFactory extends Factory
     return [
       'id' => $id,
       'caption' => $this->faker->realText,
-      'created_at' => $this->faker->dateTimeThisYear,
     ];
   }
 }

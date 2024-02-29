@@ -29,7 +29,7 @@ class ReplyController extends Controller
     ]);
     $totalCommentsCount = totalCommentsCount(Post::find($comment->post->id));
     return response()->json([
-      'data' => new ReplyResource($reply),
+      'reply' => new ReplyResource($reply),
       'commentsCount' => $totalCommentsCount,
     ], 201);
   }
@@ -45,7 +45,9 @@ class ReplyController extends Controller
     if (auth()->user()->id === $reply->user_id) {
       $reply->content = htmlspecialchars($request->content);
       $reply->save();
-      return response()->json(new ReplyResource($reply), 200);
+      return response()->json([
+        'reply' => new ReplyResource($reply),
+      ], 200);
     }
     return abort(400);
   }

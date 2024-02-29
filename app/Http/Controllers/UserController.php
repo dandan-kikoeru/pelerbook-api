@@ -2,41 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Image;
 
 class UserController extends Controller
 {
 
-  public function register(Request $request)
+  public function register(RegisterRequest $request)
   {
-    $credentials = $request->validate([
-      'firstname' => ['required', 'regex:/^[A-Za-z\s]+$/'],
-      'surname' => ['required', 'regex:/^[A-Za-z\s]+$/'],
-      'email' => ['required', 'email', Rule::unique('users', 'email')],
-      'password' => ['required', 'min:8'],
-    ]);
-    $user = User::create($credentials);
+    $user = User::create($request->all());
     Auth::login($user);
+    $request->session()->regenerateToken();
     return response()->json(new UserResource($user), 201);
   }
 
-  public function login(Request $request)
+  public function login(LoginRequest $request)
   {
-    $credentials = $request->validate([
-      'email' => ['required', 'email'],
-      'password' => ['required', 'min:8'],
-    ]);
-
-    if (Auth::attempt($credentials)) {
-      $request->session()->regenerateToken();
+    if (Auth::attempt([
+      'email' => $request->email,
+      'password' => $request->password,
+    ])) {
       $user = Auth::user();
-      return response()->json(new UserResource($user), 200);
+      $request->session()->regenerate();
+      return response()->json([
+        'user' => new UserResource($user),
+      ], 200);
     }
 
     return response()->json(['message' => 'Invalid credentials'], 400);
@@ -44,20 +41,21 @@ class UserController extends Controller
 
   public function logout(Request $request)
   {
+    Auth::guard('web')->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     return response()->json(['message' => 'Logged out successfully'], 200);
   }
 
-  public function update(Request $request)
+  public function update(UserUpdateRequest $request)
   {
     $user = Auth::user();
     $rand = Str::random(4);
+
     if ($request->hasFile('avatar')) {
       $request->validate([
-        'avatar' => ['mimes:jpeg,png,jpg,webp', 'max:2048'],
+        'avatar' => ['required', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
       ]);
-
       $avatarName = $user->id . '.webp';
       $avatar = Image::make($request->file('avatar'))->encode('webp', 90);
       $avatar
@@ -70,9 +68,8 @@ class UserController extends Controller
 
     if ($request->hasFile('cover')) {
       $request->validate([
-        'cover' => ['mimes:jpeg,png,jpg,webp', 'max:2048'],
+        'cover' => ['required', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
       ]);
-
       $coverName = $user->id . '.webp';
       Image::make($request->file('cover'))
         ->encode('webp', 90)
@@ -80,12 +77,8 @@ class UserController extends Controller
       $user->cover = '/covers/' . $coverName . '#' . $rand;
     }
 
-    if ($request->firstname) {
-      $request->validate([
-        'firstname' => ['required', 'regex:/^[A-Za-z\s]+$/'],
-        'surname' => ['required', 'regex:/^[A-Za-z\s]+$/'],
-      ]);
-      $user->firstname = $request->firstname;
+    if ($request->first_name) {
+      $user->first_name = $request->first_name;
       $user->surname = $request->surname;
     }
     $user->save();
@@ -95,6 +88,8 @@ class UserController extends Controller
   public function show(Request $request)
   {
     $user = $request->user();
-    return response()->json(new UserResource($user), 200);
+    return response()->json([
+      'user' => new UserResource($user),
+    ], 200);
   }
 }

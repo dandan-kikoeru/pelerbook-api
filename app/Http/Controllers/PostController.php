@@ -40,7 +40,9 @@ class PostController extends Controller
       'user_id' => auth()->user()->id,
       'image' => $imageName,
     ]);
-    return response()->json(new PostResource($post), 201);
+    return response()->json([
+      'post' => new PostResource($post),
+    ], 201);
   }
 
   public function update(Request $request, $id)
@@ -101,7 +103,9 @@ class PostController extends Controller
   {
     $post = Post::find($id);
     if ($post) {
-      return new PostResource($post);
+      return response()->json([
+        'post' => new PostResource($post),
+      ], 200);
     }
     return abort(404);
   }
@@ -125,7 +129,7 @@ class PostController extends Controller
     ]);
 
     return response()->json([
-      'data' => new PostResource($post),
+      'post' => new PostResource($post),
       'sharesCount' => $sharedPost->shares->count(),
     ], 201);
   }
